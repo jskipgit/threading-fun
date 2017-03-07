@@ -32,7 +32,6 @@ public class Player {
     }
 
     public void acceptWonCards(List<Card> hurraa){
-        System.out.printf("\n %s won %s cards.", name,hurraa.size());
         wonCards.addAll(hurraa);
         for(Card c:wonCards){
             c.setOwner(this);
