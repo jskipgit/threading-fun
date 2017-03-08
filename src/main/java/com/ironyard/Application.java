@@ -14,7 +14,7 @@ import java.util.concurrent.*;
 @ComponentScan(basePackages = "com.ironyard")
 public class Application
 {
-    private static final int NUMBER_OF_GAMES = 25;
+    private static final int NUMBER_OF_GAMES = 10000;
     private int gameNumber;
     private int gamesEnded;
 
