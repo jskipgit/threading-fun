@@ -1,5 +1,7 @@
 package example.threads;
 
+import com.ironyard.data.Game;
+
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -8,10 +10,23 @@ import java.util.concurrent.TimeUnit;
 public class TestThreads {
 
     public static void main(String[] stupidQuestion){
-        Runnable runnable = getRunnableWithSleep();
 
-        Thread thread = new Thread(runnable);
-        thread.start();
+        Runnable runnable = () -> {
+            Game aGame = new Game();
+            aGame.initGame(5);
+            aGame.dealOutAllCards();
+            while(aGame.getWinner() == null){
+                aGame.playRound();
+            }
+            String name = Thread.currentThread().getName();
+            System.out.println("Name of Thread: " + name + " -- Winner of Game: " + aGame.getWinner().getName());
+
+        };
+
+        for(int i = 0; i < 10000; i++) {
+            Thread thread = new Thread(runnable);
+            thread.start();
+        }
     }
 
     private static Runnable getRunnableWithSleep() {
