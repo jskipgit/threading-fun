@@ -4,17 +4,26 @@ import com.ironyard.data.Game;
 import com.ironyard.data.Player;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
+import springfox.documentation.builders.ApiInfoBuilder;
+import springfox.documentation.service.ApiInfo;
+import springfox.documentation.spi.DocumentationType;
+import springfox.documentation.spring.web.plugins.Docket;
+import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.*;
 
+import static springfox.documentation.builders.PathSelectors.regex;
+
+@EnableSwagger2
 @SpringBootApplication
 @ComponentScan(basePackages = "com.ironyard")
 public class Application
 {
-    private static final int NUMBER_OF_GAMES = 10000;
+    private static final int NUMBER_OF_GAMES = 5;
     private int gameNumber;
     private int gamesEnded;
 
@@ -101,59 +110,40 @@ public class Application
         SpringApplication.run(Application.class, args);
 
         (new Application()).doGameThreads_Method1();
-
-        //doGameThreads_Method2(5);
     }
 
 
-    /*
-    private void doGameThreads_Method2(Integer numberOfGames) throws ExecutionException, InterruptedException
-    {
-        Callable<Integer> task = () -> {
-            try {
-                TimeUnit.SECONDS.sleep(1);
-                return 123;
-            }
-            catch (InterruptedException e) {
-                throw new IllegalStateException("task interrupted", e);
-            }
-        };
-
-        ExecutorService executor = Executors.newFixedThreadPool(numberOfGames);
-
-        Future<Integer>[] futures = new Future[numberOfGames];
-
-        List<Future> activeGames = new ArrayList<>();
-
-        for (int i=0; i < numberOfGames; i++)
-        {
-            futures[i] = executor.submit(task);
-            activeGames.add(futures[i]);
-        }
-
-
-        while (activeGames.size() > 0)
-        {
-            boolean gameDone = false;
-            int i=0;
-
-            for (i=0; i < activeGames.size(); i++)
-            {
-                if (futures[i].isDone())
-                {
-                    gameDone = true;
-                    break;
-                }
-            }
-
-            if (gameDone)
-            {
-                System.out.println(futures[i].get());
-                activeGames.remove(i);
-            }
-        }
+    @Bean
+    public Docket chatApi() {
+        return new Docket(DocumentationType.SWAGGER_2)
+                .groupName("play-cards")
+                .apiInfo(apiInfo())
+                .select()
+                .paths(regex("/rest/cards/*.*"))
+                .build();
+				/*
+				.globalOperationParameters(
+						newArrayList(new ParameterBuilder()
+								.name("x-authorization-key")
+								.description("API Authorization Key")
+								.modelRef(new ModelRef("string"))
+								.parameterType("header")
+								.required(true)
+								.build()));*/
 
     }
-     */
+
+
+    private ApiInfo apiInfo() {
+        return new ApiInfoBuilder()
+                .title("Play Cards APIs")
+                .description("PlayCards")
+                .termsOfServiceUrl("http://www.theironyard.com")
+                .contact("Wail Yousif")
+                .license("Apache License Version 2.0")
+                .licenseUrl("https://github.com/IBM-Bluemix/news-aggregator/blob/master/LICENSE")
+                .version("2.1")
+                .build();
+    }
 
 }
